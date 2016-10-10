@@ -111,7 +111,7 @@ _CONFIG_DEFINITIONS = {
     'CHECK_GITHUB_INTERVAL': (int, 'General', 360),
     'CHECK_GITHUB_ON_STARTUP': (int, 'General', 1),
     'CLEANUP_FILES': (int, 'General', 0),
-    'CONFIG_VERSION': (str, 'General', '0'),
+    'CONFIG_VERSION': (int, 'Advanced', 0),
     'DO_NOT_OVERRIDE_GIT_BRANCH': (int, 'General', 0),
     'EMAIL_ENABLED': (int, 'Email', 0),
     'EMAIL_FROM_NAME': (str, 'Email', 'PlexPy'),
@@ -170,6 +170,7 @@ _CONFIG_DEFINITIONS = {
     'GET_FILE_SIZES_HOLD': (dict, 'General', {'section_ids': [], 'rating_keys': []}),
     'GIT_BRANCH': (str, 'General', 'master'),
     'GIT_PATH': (str, 'General', ''),
+    'GIT_REMOTE': (str, 'General', 'origin'),
     'GIT_TOKEN': (str, 'General', ''),
     'GIT_USER': (str, 'General', 'JonnyWong16'),
     'GRAPH_TYPE': (str, 'General', 'plays'),
@@ -311,7 +312,9 @@ _CONFIG_DEFINITIONS = {
     'NMA_ON_PMSUPDATE': (int, 'NMA', 0),
     'NMA_ON_CONCURRENT': (int, 'NMA', 0),
     'NMA_ON_NEWDEVICE': (int, 'NMA', 0),
+    'NOTIFICATION_THREADS': (int, 'Advanced', 2),
     'NOTIFY_CONSECUTIVE': (int, 'Monitoring', 1),
+    'NOTIFY_GROUP_RECENTLY_ADDED': (int, 'Monitoring', 1),
     'NOTIFY_UPLOAD_POSTERS': (int, 'Monitoring', 0),
     'NOTIFY_RECENTLY_ADDED': (int, 'Monitoring', 0),
     'NOTIFY_RECENTLY_ADDED_GRANDPARENT': (int, 'Monitoring', 0),
@@ -382,6 +385,7 @@ _CONFIG_DEFINITIONS = {
     'PLEX_ON_PMSUPDATE': (int, 'Plex', 0),
     'PLEX_ON_CONCURRENT': (int, 'Plex', 0),
     'PLEX_ON_NEWDEVICE': (int, 'Plex', 0),
+    'PLEXPY_AUTO_UPDATE': (int, 'General', 0),
     'PROWL_ENABLED': (int, 'Prowl', 0),
     'PROWL_KEYS': (str, 'Prowl', ''),
     'PROWL_PRIORITY': (int, 'Prowl', 0),
@@ -459,7 +463,8 @@ _CONFIG_DEFINITIONS = {
     'REFRESH_LIBRARIES_ON_STARTUP': (int, 'Monitoring', 1),
     'REFRESH_USERS_INTERVAL': (int, 'Monitoring', 12),
     'REFRESH_USERS_ON_STARTUP': (int, 'Monitoring', 1),
-    'SESSION_DB_WRITE_ATTEMPTS': (int, 'Monitoring', 5),
+    'REMOTE_ACCESS_PING_THRESHOLD': (int, 'Advanced', 3),
+    'SESSION_DB_WRITE_ATTEMPTS': (int, 'Advanced', 5),
     'SLACK_ENABLED': (int, 'Slack', 0),
     'SLACK_HOOK': (str, 'Slack', ''),
     'SLACK_CHANNEL': (str, 'Slack', ''),
@@ -564,8 +569,11 @@ _CONFIG_DEFINITIONS = {
     'UPDATE_SECTION_IDS': (int, 'General', 1),
     'UPDATE_SHOW_CHANGELOG': (int, 'General', 1),
     'UPDATE_LABELS': (int, 'General', 1),
+    'UPDATE_NOTIFIERS_DB': (int, 'General', 1),
     'VERIFY_SSL_CERT': (bool_int, 'Advanced', 1),
     'VIDEO_LOGGING_ENABLE': (int, 'Monitoring', 1),
+    'WEBSOCKET_CONNECTION_ATTEMPTS': (int, 'Advanced', 5),
+    'WEBSOCKET_CONNECTION_TIMEOUT': (int, 'Advanced', 5),
     'XBMC_ENABLED': (int, 'XBMC', 0),
     'XBMC_HOST': (str, 'XBMC', ''),
     'XBMC_PASSWORD': (str, 'XBMC', ''),
@@ -748,7 +756,7 @@ class Config(object):
         """
         Upgrades config file from previous verisions and bumps up config version
         """
-        if self.CONFIG_VERSION == '0':
+        if self.CONFIG_VERSION == 0:
             # Separate out movie and tv notifications
             if self.MOVIE_NOTIFY_ENABLE == 1:
                 self.TV_NOTIFY_ENABLE = 1
@@ -756,9 +764,9 @@ class Config(object):
             if self.VIDEO_LOGGING_ENABLE == 0:
                 self.MOVIE_LOGGING_ENABLE = 0
                 self.TV_LOGGING_ENABLE = 0
-            self.CONFIG_VERSION = '1'
+            self.CONFIG_VERSION = 1
 
-        if self.CONFIG_VERSION == '1':
+        if self.CONFIG_VERSION == 1:
             # Change home_stats_cards to list
             if self.HOME_STATS_CARDS:
                 home_stats_cards = ''.join(self.HOME_STATS_CARDS).split(', ')
@@ -771,29 +779,32 @@ class Config(object):
                 if 'library_statistics' in home_library_cards:
                     home_library_cards.remove('library_statistics')
                     self.HOME_LIBRARY_CARDS = home_library_cards
-            self.CONFIG_VERSION = '2'
+            self.CONFIG_VERSION = 2
 
-        if self.CONFIG_VERSION == '2':
-            self.NOTIFY_ON_START_SUBJECT_TEXT = self.NOTIFY_ON_START_SUBJECT_TEXT.replace('{progress}','{progress_duration}')
-            self.NOTIFY_ON_START_BODY_TEXT = self.NOTIFY_ON_START_BODY_TEXT.replace('{progress}','{progress_duration}')
-            self.NOTIFY_ON_STOP_SUBJECT_TEXT = self.NOTIFY_ON_STOP_SUBJECT_TEXT.replace('{progress}','{progress_duration}')
-            self.NOTIFY_ON_STOP_BODY_TEXT = self.NOTIFY_ON_STOP_BODY_TEXT.replace('{progress}','{progress_duration}')
-            self.NOTIFY_ON_PAUSE_SUBJECT_TEXT = self.NOTIFY_ON_PAUSE_SUBJECT_TEXT.replace('{progress}','{progress_duration}')
-            self.NOTIFY_ON_PAUSE_BODY_TEXT = self.NOTIFY_ON_PAUSE_BODY_TEXT.replace('{progress}','{progress_duration}')
-            self.NOTIFY_ON_RESUME_SUBJECT_TEXT = self.NOTIFY_ON_RESUME_SUBJECT_TEXT.replace('{progress}','{progress_duration}')
-            self.NOTIFY_ON_RESUME_BODY_TEXT = self.NOTIFY_ON_RESUME_BODY_TEXT.replace('{progress}','{progress_duration}')
-            self.NOTIFY_ON_BUFFER_SUBJECT_TEXT = self.NOTIFY_ON_BUFFER_SUBJECT_TEXT.replace('{progress}','{progress_duration}')
-            self.NOTIFY_ON_BUFFER_BODY_TEXT = self.NOTIFY_ON_BUFFER_BODY_TEXT.replace('{progress}','{progress_duration}')
-            self.NOTIFY_ON_WATCHED_SUBJECT_TEXT = self.NOTIFY_ON_WATCHED_SUBJECT_TEXT.replace('{progress}','{progress_duration}')
-            self.NOTIFY_ON_WATCHED_BODY_TEXT = self.NOTIFY_ON_WATCHED_BODY_TEXT.replace('{progress}','{progress_duration}')
-            self.NOTIFY_SCRIPTS_ARGS_TEXT = self.NOTIFY_SCRIPTS_ARGS_TEXT.replace('{progress}','{progress_duration}')
-            self.CONFIG_VERSION = '3'
+        if self.CONFIG_VERSION == 2:
+            def rep(s):
+                return s.replace('{progress}','{progress_duration}')
 
-        if self.CONFIG_VERSION == '3':
+            self.NOTIFY_ON_START_SUBJECT_TEXT = rep(self.NOTIFY_ON_START_SUBJECT_TEXT)
+            self.NOTIFY_ON_START_BODY_TEXT = rep(self.NOTIFY_ON_START_BODY_TEXT)
+            self.NOTIFY_ON_STOP_SUBJECT_TEXT = rep(self.NOTIFY_ON_STOP_SUBJECT_TEXT)
+            self.NOTIFY_ON_STOP_BODY_TEXT = rep(self.NOTIFY_ON_STOP_BODY_TEXT)
+            self.NOTIFY_ON_PAUSE_SUBJECT_TEXT = rep(self.NOTIFY_ON_PAUSE_SUBJECT_TEXT)
+            self.NOTIFY_ON_PAUSE_BODY_TEXT = rep(self.NOTIFY_ON_PAUSE_BODY_TEXT)
+            self.NOTIFY_ON_RESUME_SUBJECT_TEXT = rep(self.NOTIFY_ON_RESUME_SUBJECT_TEXT)
+            self.NOTIFY_ON_RESUME_BODY_TEXT = rep(self.NOTIFY_ON_RESUME_BODY_TEXT)
+            self.NOTIFY_ON_BUFFER_SUBJECT_TEXT = rep(self.NOTIFY_ON_BUFFER_SUBJECT_TEXT)
+            self.NOTIFY_ON_BUFFER_BODY_TEXT = rep(self.NOTIFY_ON_BUFFER_BODY_TEXT)
+            self.NOTIFY_ON_WATCHED_SUBJECT_TEXT = rep(self.NOTIFY_ON_WATCHED_SUBJECT_TEXT)
+            self.NOTIFY_ON_WATCHED_BODY_TEXT = rep(self.NOTIFY_ON_WATCHED_BODY_TEXT)
+            self.NOTIFY_SCRIPTS_ARGS_TEXT = rep(self.NOTIFY_SCRIPTS_ARGS_TEXT)
+            self.CONFIG_VERSION = 3
+
+        if self.CONFIG_VERSION == 3:
             if self.HTTP_ROOT == '/': self.HTTP_ROOT = ''
-            self.CONFIG_VERSION = '4'
+            self.CONFIG_VERSION = 4
 
-        if self.CONFIG_VERSION == '4':
+        if self.CONFIG_VERSION == 4:
             if not len(self.HOME_STATS_CARDS) and 'watch_stats' in self.HOME_SECTIONS:
                 home_sections = self.HOME_SECTIONS
                 home_sections.remove('watch_stats')
@@ -802,13 +813,34 @@ class Config(object):
                 home_sections = self.HOME_SECTIONS
                 home_sections.remove('library_stats')
                 self.HOME_SECTIONS = home_sections
-            self.CONFIG_VERSION = '5'
+            self.CONFIG_VERSION = 5
 
-        if self.CONFIG_VERSION == '5':
+        if self.CONFIG_VERSION == 5:
             self.MONITOR_PMS_UPDATES = 0
-            self.CONFIG_VERSION = '6'
+            self.CONFIG_VERSION = 6
 
-        if self.CONFIG_VERSION == '6':
+        if self.CONFIG_VERSION == 6:
             if self.GIT_USER.lower() == 'drzoidberg33':
                 self.GIT_USER = 'JonnyWong16'
-            self.CONFIG_VERSION = '7'
+            self.CONFIG_VERSION = 7
+
+        if self.CONFIG_VERSION == 7:
+            def rep(s):
+                return s.replace('<tv>','<episode>').replace('</tv>','</episode>').replace('<music>','<track>').replace('</music>','</track>')
+
+            self.NOTIFY_ON_START_SUBJECT_TEXT = rep(self.NOTIFY_ON_START_SUBJECT_TEXT)
+            self.NOTIFY_ON_START_BODY_TEXT = rep(self.NOTIFY_ON_START_BODY_TEXT)
+            self.NOTIFY_ON_STOP_SUBJECT_TEXT = rep(self.NOTIFY_ON_STOP_SUBJECT_TEXT)
+            self.NOTIFY_ON_STOP_BODY_TEXT = rep(self.NOTIFY_ON_STOP_BODY_TEXT)
+            self.NOTIFY_ON_PAUSE_SUBJECT_TEXT = rep(self.NOTIFY_ON_PAUSE_SUBJECT_TEXT)
+            self.NOTIFY_ON_PAUSE_BODY_TEXT = rep(self.NOTIFY_ON_PAUSE_BODY_TEXT)
+            self.NOTIFY_ON_RESUME_SUBJECT_TEXT = rep(self.NOTIFY_ON_RESUME_SUBJECT_TEXT)
+            self.NOTIFY_ON_RESUME_BODY_TEXT = rep(self.NOTIFY_ON_RESUME_BODY_TEXT)
+            self.NOTIFY_ON_BUFFER_SUBJECT_TEXT = rep(self.NOTIFY_ON_BUFFER_SUBJECT_TEXT)
+            self.NOTIFY_ON_BUFFER_BODY_TEXT = rep(self.NOTIFY_ON_BUFFER_BODY_TEXT)
+            self.NOTIFY_ON_WATCHED_SUBJECT_TEXT = rep(self.NOTIFY_ON_WATCHED_SUBJECT_TEXT)
+            self.NOTIFY_ON_WATCHED_BODY_TEXT = rep(self.NOTIFY_ON_WATCHED_BODY_TEXT)
+            self.NOTIFY_SCRIPTS_ARGS_TEXT = rep(self.NOTIFY_SCRIPTS_ARGS_TEXT)
+
+            self.MONITORING_USE_WEBSOCKET = 1
+            self.CONFIG_VERSION = 8

@@ -97,44 +97,18 @@ class ActivityProcessor(object):
 
             if result == 'insert':
                 # Check if any notification agents have notifications enabled
-                if notify and any(d['on_play'] for d in notifiers.available_notification_agents()):
+                if notify:
                     values.update({'ip_address': session['ip_address']})
-                    # Push any notifications - Push it on it's own thread so we don't hold up our db actions
-                    threading.Thread(target=notification_handler.notify,
-                                     kwargs=dict(stream_data=values, notify_action='play')).start()
+                    plexpy.NOTIFY_QUEUE.put({'stream_data': values, 'notify_action': 'on_play'})
 
                 # If it's our first write then time stamp it.
                 started = int(time.time())
                 timestamp = {'started': started}
                 self.db.upsert('sessions', timestamp, keys)
 
-                # Try and grab IP address from logs (fallback if not on PMS 0.9.14 and above)
-                if not session['ip_address']:
-                    if plexpy.CONFIG.IP_LOGGING_ENABLE and plexpy.CONFIG.PMS_LOGS_FOLDER:
-                        ip_address = self.find_session_ip(rating_key=session['rating_key'],
-                                                          machine_id=session['machine_id'])
-                        ip_address = {'ip_address': ip_address}
-                        self.db.upsert('sessions', ip_address, keys)
-
-                # Check if any notification agents have notifications enabled
-                if notify and any(d['on_concurrent'] for d in notifiers.available_notification_agents()):
-                    # Check if any concurrent streams by the user
-                    user_sessions = self.get_session_by_user_id(user_id=session['user_id'],
-                                                                ip_address=plexpy.CONFIG.NOTIFY_CONCURRENT_BY_IP)
-                    if len(user_sessions) >= plexpy.CONFIG.NOTIFY_CONCURRENT_THRESHOLD:
-                        # Push any notifications - Push it on it's own thread so we don't hold up our db actions
-                        threading.Thread(target=notification_handler.notify,
-                                         kwargs=dict(stream_data=values, notify_action='concurrent')).start()
-
-                # Check if any notification agents have notifications enabled
-                if notify and any(d['on_newdevice'] for d in notifiers.available_notification_agents()):
-                    # Check if any concurrent streams by the user
-                    data_factory = datafactory.DataFactory()
-                    user_devices = data_factory.get_user_devices(user_id=session['user_id'])
-                    if session['machine_id'] not in user_devices:
-                        # Push any notifications - Push it on it's own thread so we don't hold up our db actions
-                        threading.Thread(target=notification_handler.notify,
-                                         kwargs=dict(stream_data=values, notify_action='newdevice')).start()
+                if notify:
+                    plexpy.NOTIFY_QUEUE.put({'stream_data': values, 'notify_action': 'on_concurrent'})
+                    plexpy.NOTIFY_QUEUE.put({'stream_data': values, 'notify_action': 'on_newdevice'})
 
                 return True
 
@@ -493,3 +467,7 @@ class ActivityProcessor(object):
                                       'WHERE user_id = ? %s' % ip,
                                       [user_id])
         return sessions
+
+    def set_temp_stopped(self):
+        stopped_time = int(time.time())
+        monitor_db.action('UPDATE sessions SET stopped = ?', [stopped_time])

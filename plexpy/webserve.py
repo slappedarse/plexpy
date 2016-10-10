@@ -2557,12 +2557,10 @@ class WebInterface(object):
             "monitor_pms_updates": checked(plexpy.CONFIG.MONITOR_PMS_UPDATES),
             "monitor_remote_access": checked(plexpy.CONFIG.MONITOR_REMOTE_ACCESS),
             "monitoring_interval": plexpy.CONFIG.MONITORING_INTERVAL,
-            "monitoring_use_websocket": checked(plexpy.CONFIG.MONITORING_USE_WEBSOCKET),
             "refresh_libraries_interval": plexpy.CONFIG.REFRESH_LIBRARIES_INTERVAL,
             "refresh_libraries_on_startup": checked(plexpy.CONFIG.REFRESH_LIBRARIES_ON_STARTUP),
             "refresh_users_interval": plexpy.CONFIG.REFRESH_USERS_INTERVAL,
             "refresh_users_on_startup": checked(plexpy.CONFIG.REFRESH_USERS_ON_STARTUP),
-            "ip_logging_enable": checked(plexpy.CONFIG.IP_LOGGING_ENABLE),
             "movie_logging_enable": checked(plexpy.CONFIG.MOVIE_LOGGING_ENABLE),
             "tv_logging_enable": checked(plexpy.CONFIG.TV_LOGGING_ENABLE),
             "music_logging_enable": checked(plexpy.CONFIG.MUSIC_LOGGING_ENABLE),
@@ -2571,40 +2569,10 @@ class WebInterface(object):
             "notify_consecutive": checked(plexpy.CONFIG.NOTIFY_CONSECUTIVE),
             "notify_upload_posters": checked(plexpy.CONFIG.NOTIFY_UPLOAD_POSTERS),
             "notify_recently_added": checked(plexpy.CONFIG.NOTIFY_RECENTLY_ADDED),
-            "notify_recently_added_grandparent": checked(plexpy.CONFIG.NOTIFY_RECENTLY_ADDED_GRANDPARENT),
-            "notify_recently_added_delay": plexpy.CONFIG.NOTIFY_RECENTLY_ADDED_DELAY,
+            "notify_group_recently_added": checked(plexpy.CONFIG.NOTIFY_GROUP_RECENTLY_ADDED),
             "notify_concurrent_by_ip": checked(plexpy.CONFIG.NOTIFY_CONCURRENT_BY_IP),
             "notify_concurrent_threshold": plexpy.CONFIG.NOTIFY_CONCURRENT_THRESHOLD,
             "notify_watched_percent": plexpy.CONFIG.NOTIFY_WATCHED_PERCENT,
-            "notify_on_start_subject_text": plexpy.CONFIG.NOTIFY_ON_START_SUBJECT_TEXT,
-            "notify_on_start_body_text": plexpy.CONFIG.NOTIFY_ON_START_BODY_TEXT,
-            "notify_on_stop_subject_text": plexpy.CONFIG.NOTIFY_ON_STOP_SUBJECT_TEXT,
-            "notify_on_stop_body_text": plexpy.CONFIG.NOTIFY_ON_STOP_BODY_TEXT,
-            "notify_on_pause_subject_text": plexpy.CONFIG.NOTIFY_ON_PAUSE_SUBJECT_TEXT,
-            "notify_on_pause_body_text": plexpy.CONFIG.NOTIFY_ON_PAUSE_BODY_TEXT,
-            "notify_on_resume_subject_text": plexpy.CONFIG.NOTIFY_ON_RESUME_SUBJECT_TEXT,
-            "notify_on_resume_body_text": plexpy.CONFIG.NOTIFY_ON_RESUME_BODY_TEXT,
-            "notify_on_buffer_subject_text": plexpy.CONFIG.NOTIFY_ON_BUFFER_SUBJECT_TEXT,
-            "notify_on_buffer_body_text": plexpy.CONFIG.NOTIFY_ON_BUFFER_BODY_TEXT,
-            "notify_on_watched_subject_text": plexpy.CONFIG.NOTIFY_ON_WATCHED_SUBJECT_TEXT,
-            "notify_on_watched_body_text": plexpy.CONFIG.NOTIFY_ON_WATCHED_BODY_TEXT,
-            "notify_on_created_subject_text": plexpy.CONFIG.NOTIFY_ON_CREATED_SUBJECT_TEXT,
-            "notify_on_created_body_text": plexpy.CONFIG.NOTIFY_ON_CREATED_BODY_TEXT,
-            "notify_on_extdown_subject_text": plexpy.CONFIG.NOTIFY_ON_EXTDOWN_SUBJECT_TEXT,
-            "notify_on_extdown_body_text": plexpy.CONFIG.NOTIFY_ON_EXTDOWN_BODY_TEXT,
-            "notify_on_intdown_subject_text": plexpy.CONFIG.NOTIFY_ON_INTDOWN_SUBJECT_TEXT,
-            "notify_on_intdown_body_text": plexpy.CONFIG.NOTIFY_ON_INTDOWN_BODY_TEXT,
-            "notify_on_extup_subject_text": plexpy.CONFIG.NOTIFY_ON_EXTUP_SUBJECT_TEXT,
-            "notify_on_extup_body_text": plexpy.CONFIG.NOTIFY_ON_EXTUP_BODY_TEXT,
-            "notify_on_intup_subject_text": plexpy.CONFIG.NOTIFY_ON_INTUP_SUBJECT_TEXT,
-            "notify_on_intup_body_text": plexpy.CONFIG.NOTIFY_ON_INTUP_BODY_TEXT,
-            "notify_on_pmsupdate_subject_text": plexpy.CONFIG.NOTIFY_ON_PMSUPDATE_SUBJECT_TEXT,
-            "notify_on_pmsupdate_body_text": plexpy.CONFIG.NOTIFY_ON_PMSUPDATE_BODY_TEXT,
-            "notify_on_concurrent_subject_text": plexpy.CONFIG.NOTIFY_ON_CONCURRENT_SUBJECT_TEXT,
-            "notify_on_concurrent_body_text": plexpy.CONFIG.NOTIFY_ON_CONCURRENT_BODY_TEXT,
-            "notify_on_newdevice_subject_text": plexpy.CONFIG.NOTIFY_ON_NEWDEVICE_SUBJECT_TEXT,
-            "notify_on_newdevice_body_text": plexpy.CONFIG.NOTIFY_ON_NEWDEVICE_BODY_TEXT,
-            "notify_scripts_args_text": plexpy.CONFIG.NOTIFY_SCRIPTS_ARGS_TEXT,
             "home_sections": json.dumps(plexpy.CONFIG.HOME_SECTIONS),
             "home_stats_length": plexpy.CONFIG.HOME_STATS_LENGTH,
             "home_stats_type": checked(plexpy.CONFIG.HOME_STATS_TYPE),
@@ -2617,7 +2585,11 @@ class WebInterface(object):
             "git_token": plexpy.CONFIG.GIT_TOKEN,
             "imgur_client_id": plexpy.CONFIG.IMGUR_CLIENT_ID,
             "cache_images": checked(plexpy.CONFIG.CACHE_IMAGES),
-            "pms_version": plexpy.CONFIG.PMS_VERSION
+            "pms_version": plexpy.CONFIG.PMS_VERSION,
+            "plexpy_auto_update": checked(plexpy.CONFIG.PLEXPY_AUTO_UPDATE),
+            "git_branch": plexpy.CONFIG.GIT_BRANCH,
+            "git_path": plexpy.CONFIG.GIT_PATH,
+            "git_remote": plexpy.CONFIG.GIT_REMOTE
         }
 
         return serve_template(templatename="settings.html", title="Settings", config=config, kwargs=kwargs)
@@ -2632,13 +2604,13 @@ class WebInterface(object):
             "launch_browser", "enable_https", "https_create_cert", "api_enabled", "freeze_db", "check_github",
             "grouping_global_history", "grouping_user_history", "grouping_charts", "group_history_tables",
             "pms_use_bif", "pms_ssl", "pms_is_remote", "home_stats_type",
-            "movie_notify_enable", "tv_notify_enable", "music_notify_enable", "monitoring_use_websocket",
+            "movie_notify_enable", "tv_notify_enable", "music_notify_enable",
             "refresh_libraries_on_startup", "refresh_users_on_startup",
-            "ip_logging_enable", "movie_logging_enable", "tv_logging_enable", "music_logging_enable",
-            "notify_consecutive", "notify_upload_posters", "notify_recently_added", "notify_recently_added_grandparent",
+            "movie_logging_enable", "tv_logging_enable", "music_logging_enable",
+            "notify_consecutive", "notify_upload_posters", "notify_recently_added", "notify_group_recently_added",
             "monitor_pms_updates", "monitor_remote_access", "get_file_sizes", "log_blacklist", "http_hash_password",
             "allow_guest_access", "cache_images", "http_proxy", "http_basic_auth", "notify_concurrent_by_ip",
-            "history_table_activity"
+            "history_table_activity", "plexpy_auto_update"
         ]
         for checked_config in checked_configs:
             if checked_config not in kwargs:
@@ -2841,46 +2813,180 @@ class WebInterface(object):
             return {'result': 'error', 'message': 'GeoLite2 database uninstall failed.'}
 
     @cherrypy.expose
+    @cherrypy.tools.json_out()
     @requireAuth(member_of("admin"))
-    def get_notification_agent_config(self, agent_id, **kwargs):
-        if agent_id.isdigit():
-            config = notifiers.get_notification_agent_config(agent_id=agent_id)
-            agents = notifiers.available_notification_agents()
-            for agent in agents:
-                if int(agent_id) == agent['id']:
-                    this_agent = agent
-                    break
-                else:
-                    this_agent = None
-        else:
-            return None
+    @addtoapi()
+    def get_notifiers(self, notify_action=None, **kwargs):
+        """ Get a list of configured notifiers.
 
-        checkboxes = {'email_tls': checked(plexpy.CONFIG.EMAIL_TLS)}
+            ```
+            Required parameters:
+                None
 
-        return serve_template(templatename="notification_config.html", title="Notification Configuration",
-                              agent=this_agent, data=config, checkboxes=checkboxes)
+            Optional parameters:
+                notify_action (str):        The notification action to filter out
+
+            Returns:
+                json:
+                    [{"id": 1,
+                      "agent_id": 13,
+                      "agent_name": "telegram",
+                      "agent_label": "Telegram",
+                      "friendly_name": "",
+                      "active": 1
+                      }
+                     ]
+            ```
+        """
+        result = notifiers.get_notifiers(notify_action=notify_action)
+        return result
 
     @cherrypy.expose
     @requireAuth(member_of("admin"))
-    def get_notification_agent_triggers(self, agent_id, **kwargs):
-        if agent_id.isdigit():
-            agents = notifiers.available_notification_agents()
-            for agent in agents:
-                if int(agent_id) == agent['id']:
-                    this_agent = agent
-                    break
-                else:
-                    this_agent = None
-        else:
-            return None
+    def get_notifiers_table(self, **kwargs):
+        result = notifiers.get_notifiers()
+        return serve_template(templatename="notifiers_table.html", notifiers_list=result)
 
-        return serve_template(templatename="notification_triggers_modal.html", title="Notification Triggers",
-                              data=this_agent)
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @requireAuth(member_of("admin"))
+    @addtoapi()
+    def delete_notifier(self, notifier_id=None, **kwargs):
+        """ Remove a notifier from the database.
+
+            ```
+            Required parameters:
+                notifier_id (int):        The notifier to delete
+
+            Optional parameters:
+                None
+
+            Returns:
+                None
+            ```
+        """
+        result = notifiers.delete_notifier(notifier_id=notifier_id)
+        if result:
+            return {'result': 'success', 'message': 'Notifier deleted successfully.'}
+        else:
+            return {'result': 'error', 'message': 'Failed to delete notifier.'}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @requireAuth(member_of("admin"))
+    @addtoapi()
+    def get_notifier_config(self, notifier_id=None, **kwargs):
+        """ Get the configuration for an existing notification agent.
+
+            ```
+            Required parameters:
+                notifier_id (int):        The notifier config to retrieve
+
+            Optional parameters:
+                None
+
+            Returns:
+                json:
+                    {"id": 1,
+                     "agent_id": 13,
+                     "agent_name": "telegram",
+                     "agent_label": "Telegram",
+                     "friendly_name": "",
+                     "config": {"incl_poster": 0,
+                                "html_support": 1,
+                                "chat_id": "123456",
+                                "bot_token": "13456789:fio9040NNo04jLEp-4S",
+                                "incl_subject": 1,
+                                "disable_web_preview": 0
+                                },
+                     "config_options": [{...}, ...]
+                     "actions": {"on_play": 0,
+                                 "on_stop": 0,
+                                 ...
+                                 },
+                     "notify_text": {"on_play": {"subject": "...",
+                                                 "body": "..."
+                                                 }
+                                     "on_stop": {"subject": "...",
+                                                 "body": "..."
+                                                 }
+                                     ...
+                                     }
+                     }
+            ```
+        """
+        result = notifiers.get_notifier_config(notifier_id=notifier_id)
+        return result
+
+    @cherrypy.expose
+    @requireAuth(member_of("admin"))
+    def get_notifier_config_modal(self, notifier_id=None, **kwargs):
+        result = notifiers.get_notifier_config(notifier_id=notifier_id)
+        return serve_template(templatename="notifier_config.html", notifier=result)
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @requireAuth(member_of("admin"))
+    @addtoapi()
+    def add_notifier_config(self, agent_id=None, **kwargs):
+        """ Add a new notification agent.
+
+            ```
+            Required parameters:
+                agent_id (int):           The notification agent to add
+
+            Optional parameters:
+                None
+
+            Returns:
+                None
+            ```
+        """
+        result = notifiers.add_notifier_config(agent_id=agent_id, **kwargs)
+
+        if result:
+            return {'result': 'success', 'message': 'Added notification agent.', 'notifier_id': result}
+        else:
+            return {'result': 'error', 'message': 'Failed to add notification agent.'}
+
+    @cherrypy.expose
+    @cherrypy.tools.json_out()
+    @requireAuth(member_of("admin"))
+    @addtoapi()
+    def set_notifier_config(self, notifier_id=None, agent_id=None, **kwargs):
+        """ Configure an exisitng notificaiton agent.
+
+            ```
+            Required parameters:
+                notifier_id (int):        The notifier config to update
+                agent_id (int):           The agent of the notifier
+
+            Optional parameters:
+                Pass all the config options for the agent with the agent prefix:
+                    e.g. For Telegram: telegram_bot_token
+                                       telegram_chat_id
+                                       disable_web_preview
+                                       html_support
+                                       incl_poster
+                                       incl_subject
+                Notify actions with 'trigger_' prefix (trigger_on_play, trigger_on_stop, etc.),
+                and notify text with 'text_' prefix (text_on_play_subject, text_on_play_body, etc.) are optional.
+
+            Returns:
+                None
+            ```
+        """
+        result = notifiers.set_notifier_config(notifier_id=notifier_id, agent_id=agent_id, **kwargs)
+
+        if result:
+            return {'result': 'success', 'message': 'Added notification agent.'}
+        else:
+            return {'result': 'error', 'message': 'Failed to add notification agent.'}
 
     @cherrypy.expose
     @requireAuth(member_of("admin"))
     @addtoapi("notify")
-    def send_notification(self, agent_id=None, subject='PlexPy', body='Test notification', notify_action=None, **kwargs):
+    def send_notification(self, notifier_id=None, subject='PlexPy', body='Test notification', notify_action='', **kwargs):
         """ Send a notification using PlexPy.
 
             ```
@@ -2919,33 +3025,31 @@ class WebInterface(object):
 
         test = 'test ' if notify_action == 'test' else ''
 
-        if agent_id.isdigit():
-            agents = notifiers.available_notification_agents()
-            for agent in agents:
-                if int(agent_id) == agent['id']:
-                    this_agent = agent
-                    break
-                else:
-                    this_agent = None
-
-            if this_agent:
-                logger.debug(u"Sending %s%s notification." % (test, this_agent['name']))
-                if notifiers.send_notification(this_agent['id'], subject, body, notify_action, **kwargs):
+        if notifier_id:
+            notifier = notifiers.get_notifier_config(notifier_id=notifier_id)
+            
+            if notifier:
+                logger.debug(u"Sending %s%s notification." % (test, notifier['agent_name']))
+                if notifiers.send_notification(notifier_id=notifier_id,
+                                               subject=subject,
+                                               body=body,
+                                               notify_action=notify_action,
+                                               **kwargs):
                     return "Notification sent."
                 else:
                     return "Notification failed."
             else:
-                logger.debug(u"Unable to send %snotification, invalid notification agent id %s." % (test, agent_id))
-                return "Invalid notification agent id %s." % agent_id
+                logger.debug(u"Unable to send %snotification, invalid notifier_id %s." % (test, notifier_id))
+                return "Invalid notifier id %s." % notifier_id
         else:
-            logger.debug(u"Unable to send %snotification, no notification agent id received." % test)
-            return "No notification agent id received."
+            logger.debug(u"Unable to send %snotification, no notifier_id received." % test)
+            return "No notifier id received."
 
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @requireAuth(member_of("admin"))
     def get_browser_notifications(self, **kwargs):
-        browser = notifiers.Browser()
+        browser = notifiers.BROWSER()
         result = browser.get_notifications()
 
         if result:
@@ -2962,14 +3066,14 @@ class WebInterface(object):
     @requireAuth(member_of("admin"))
     def facebookStep1(self, **kwargs):
         cherrypy.response.headers['Cache-Control'] = "max-age=0,no-cache,no-store"
-        facebook = notifiers.FacebookNotifier()
+        facebook = notifiers.FACEBOOK()
         return facebook._get_authorization()
 
     @cherrypy.expose
     @requireAuth(member_of("admin"))
     def facebookStep2(self, code, **kwargs):
         cherrypy.response.headers['Cache-Control'] = "max-age=0,no-cache,no-store"
-        facebook = notifiers.FacebookNotifier()
+        facebook = notifiers.FACEBOOK()
         result = facebook._get_credentials(code)
         # logger.info(u"result: " + str(result))
         if result:
@@ -2985,8 +3089,8 @@ class WebInterface(object):
 
         result, msg = osxnotify.registerapp(app)
         if result:
-            osx_notify = notifiers.OSX_NOTIFY()
-            osx_notify.notify('Registered', result, 'Success :-)')
+            osx_notify = notifiers.OSX()
+            osx_notify.notify(subject='Registered', body='Success :-)', subtitle=result)
             # logger.info(u"Registered %s, to re-register a different app, delete this app first" % result)
         else:
             logger.warn(msg)
@@ -3233,6 +3337,19 @@ class WebInterface(object):
         plexpy.CONFIG.__setattr__('UPDATE_SHOW_CHANGELOG', 1)
         plexpy.CONFIG.write()
         return self.do_state_change('update', 'Updating', 120)
+
+    @cherrypy.expose
+    @requireAuth(member_of("admin"))
+    def checkout_git_branch(self, git_remote=None, git_branch=None, **kwargs):
+        if git_branch == plexpy.CONFIG.GIT_BRANCH:
+            logger.error(u"Already on the %s branch" % git_branch)
+            raise cherrypy.HTTPRedirect(plexpy.HTTP_ROOT + "home")
+        
+        # Set the new git remote and branch
+        plexpy.CONFIG.__setattr__('GIT_REMOTE', git_remote)
+        plexpy.CONFIG.__setattr__('GIT_BRANCH', git_branch)
+        plexpy.CONFIG.write()
+        return self.do_state_change('checkout', 'Switching Git Branches', 120)
 
     @cherrypy.expose
     @requireAuth(member_of("admin"))
