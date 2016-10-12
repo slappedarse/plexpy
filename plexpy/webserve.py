@@ -3317,8 +3317,8 @@ class WebInterface(object):
         quote = self.random_arnold_quotes()
         plexpy.SIGNAL = signal
 
-        return serve_template(templatename="shutdown.html", title=title,
-                              message=message, timer=timer, quote=quote)
+        return serve_template(templatename="shutdown.html", signal=signal,
+                              title=title, message=message, timer=timer, quote=quote)
 
     @cherrypy.expose
     @requireAuth(member_of("admin"))
