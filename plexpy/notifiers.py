@@ -1915,13 +1915,17 @@ class SCRIPTS(Notifier):
                                        stderr=subprocess.PIPE,
                                        cwd=self.config['script_folder'])
 
-            timer = threading.Timer(self.config['timeout'], kill_script, (process,))
+            if self.config['script_timeout']:
+                timer = threading.Timer(self.config['timeout'], kill_script, (process,))
+            else:
+                timer = None
+
             try:
-                timer.start()
+                if timer: timer.start()
                 output, error = process.communicate()
                 status = process.returncode
             finally:
-                timer.cancel()
+                if timer: timer.cancel()
 
         except OSError as e:
             logger.error(u"PlexPy Notifiers :: Failed to run script: %s" % e)
@@ -2027,7 +2031,7 @@ class SCRIPTS(Notifier):
                          {'label': 'Script Timeout',
                           'value': self.config['timeout'],
                           'name': 'scripts_timeout',
-                          'description': 'The number of seconds to wait before killing the script.',
+                          'description': 'The number of seconds to wait before killing the script. 0 to disable timeout.',
                           'input_type': 'number'
                           }
                          ]

@@ -3102,8 +3102,11 @@ a:hover .overlay-refresh-image:hover {
 #plex-log-levels label {
     margin-bottom: 0;
 }
-#api_key.form-control[disabled] {
+#api_key.form-control[readonly] {
     background-color: #555;
+}
+#api_key.form-control[readonly]:focus {
+    background-color: #fff;
 }
 #plexpy-notifiers-table .friendly_name,
 #notifier-config-modal span.notifier_id {
