@@ -329,7 +329,9 @@ class WebInterface(object):
     @cherrypy.expose
     @cherrypy.tools.json_out()
     @requireAuth(member_of("admin"))
+    @addtoapi()
     def delete_temp_sessions(self, **kwargs):
+        """ Flush out all of the temporary sessions in the database."""
 
         result = database.delete_sessions()
 
@@ -3212,8 +3214,13 @@ class WebInterface(object):
         quote = self.random_arnold_quotes()
         plexpy.SIGNAL = signal
 
+        if plexpy.CONFIG.HTTP_ROOT:
+            new_http_root = '/' + plexpy.CONFIG.HTTP_ROOT.strip('/') + '/'
+        else:
+            new_http_root = '/'
+
         return serve_template(templatename="shutdown.html", title=title,
-                              message=message, timer=timer, quote=quote)
+                              new_http_root=new_http_root, message=message, timer=timer, quote=quote)
 
     @cherrypy.expose
     @requireAuth(member_of("admin"))
@@ -3245,14 +3252,14 @@ class WebInterface(object):
         if source == 'history':
             data_factory = datafactory.DataFactory()
             result = data_factory.get_metadata_details(rating_key=rating_key)
-            if result:
+            if result and result['metadata']:
                 metadata = result['metadata']
                 poster_url = data_factory.get_poster_url(metadata=metadata)
                 metadata['poster_url'] = poster_url
         else:
             pms_connect = pmsconnect.PmsConnect()
             result = pms_connect.get_metadata_details(rating_key=rating_key, get_media_info=True)
-            if result:
+            if result and result['metadata']:
                 metadata = result['metadata']
                 data_factory = datafactory.DataFactory()
                 poster_url = data_factory.get_poster_url(metadata=metadata)
@@ -3289,8 +3296,7 @@ class WebInterface(object):
 
         refresh = False
         if kwargs.get('refresh'):
-            mo = member_of('admin')
-            refresh = True if mo() else False
+            refresh = False if get_session_user_id() else True
 
         kwargs['refresh'] = refresh
 
